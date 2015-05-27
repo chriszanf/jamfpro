@@ -23,8 +23,7 @@ awdlstatus=$(ifconfig awdl0 | awk '/status/{print $2}')
 # find out if awdl0 is already inactive, if it is, end script. If it's not, disable it.
 
 if [ "$awdlstatus" = "inactive" ]; then
-        exit 0
+        end
 else
         ifconfig awdl0 down
 fi
-exit 0
