@@ -10,7 +10,6 @@
 ########################################################################
 
 #check for CocoaDialog & if not install it
-
 if [ -d "/usr/sbin/cocoaDialog.app" ]; then
 	CoDi="/usr/sbin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
 else
@@ -30,10 +29,10 @@ user=`python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; 
 #figure out the user's full name
 name=$(finger $user | awk -F: '{ print $3 }' | head -n1 | sed 's/^ //' )
 
-# get first name
+# get first initial
 finitial="$(echo $name | head -c 1)"
 
-# clean for lastname
+# get last name
 ln="$(echo $name | cut -d \  -f 2)"
 
 # add first and last together
@@ -63,13 +62,11 @@ function cdprompt() {
 }
 
 #cleans the first two characters out (cocoaDialog adds a 1 \n to the string value which we don't need.)
-
 function cleanjssdept() {
 	dept=${jssdept:2}
 }
 
 #sets department using JAMF Framework Recon command
-
 function setdepartment() {
 	jamf recon -department $dept
 }
@@ -80,19 +77,16 @@ function setdepartment() {
 ########################################################################
 
 sethostname
-checkforblank
+cdprompt
 setdepartment
 
 # now that the dept is set let's apply profiles and policies
-
 jamf manage
 jamf policy
 
 # manage and policy probably changed stuff, so let's submit an updated inventory
-
 jamf recon
 
 #notify the tech that computer is ready for restart
-
 /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -startlaunchd -windowType hud -title "JAMF Software" -heading "Enrollment Complete" -description "Enrollment has been completed. You should restart to enable FileVault 2." -button1 "OK" -defaultButton 1
 
