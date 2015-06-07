@@ -24,8 +24,11 @@ fi
 
 #Set the hostname
 
-# get full name
-name=$(finger `whoami` | awk -F: '{ print $3 }' | head -n1 | sed 's/^ //' )
+# figure out the user
+user=`python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");'`
+
+#figure out the user's full name
+name=$(finger $user | awk -F: '{ print $3 }' | head -n1 | sed 's/^ //' )
 
 # get first name
 finitial="$(echo $name | head -c 1)"
@@ -65,15 +68,6 @@ function cleanjssdept() {
 	dept=${jssdept:2}
 }
 
-#checks for a blank department, and if its blank prompt agian 
-
-function checkforblank() {
-	while [[ -z $dept && {$hostname+1} ]]
-	do
-		cdprompt
-	done
-}
-
 #sets department using JAMF Framework Recon command
 
 function setdepartment() {
@@ -86,7 +80,6 @@ function setdepartment() {
 ########################################################################
 
 sethostname
-cdprompt
 checkforblank
 setdepartment
 
@@ -95,9 +88,11 @@ setdepartment
 jamf manage
 jamf policy
 
-# now let's submit an updated inventory
+# manage and policy probably changed stuff, so let's submit an updated inventory
 
 jamf recon
+
+#notify the tech that computer is ready for restart
 
 /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -startlaunchd -windowType hud -title "JAMF Software" -heading "Enrollment Complete" -description "Enrollment has been completed. You should restart to enable FileVault 2." -button1 "OK" -defaultButton 1
 
