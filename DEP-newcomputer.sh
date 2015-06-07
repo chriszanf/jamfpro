@@ -46,9 +46,7 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 #######################################################################
 
 function sethostname() {
-	scutil --set HostName $hostname
-	scutil --set ComputerName $hostname
-	scutil --set LocalHostName $hostname
+	jamf setComputerName -name $hostname
 }
 
 function cdprompt() {
