@@ -86,7 +86,8 @@ jamf policy
 jamf recon
 
 # install all updates and turn schedule On
-softwareupdate -ia --schedule on
+softwareupdate --schedule on
+softwareupdate -ia
 
 #notify the tech that computer is ready for restart
 /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -startlaunchd -windowType hud -title "JAMF Software" -heading "Enrollment Complete" -description "Enrollment has been completed. You should restart to enable FileVault 2." -button1 "OK" -defaultButton 1
