@@ -50,7 +50,7 @@ function sethostname() {
 }
 
 function cdprompt() {
-	jssdept=`"$CoDi" standard-dropdown --title "Choose a Department" --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
+	jssdept=`"$CoDi" standard-dropdown --title "Choose a Department"  --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
 
 	if [ "$jssdept" == "2" ]; then
 		echo "user cancelled"
@@ -84,6 +84,9 @@ jamf policy
 
 # manage and policy probably changed stuff, so let's submit an updated inventory
 jamf recon
+
+# install all updates and turn schedule On
+softwareupdate -ia --schedule on
 
 #notify the tech that computer is ready for restart
 /Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -startlaunchd -windowType hud -title "JAMF Software" -heading "Enrollment Complete" -description "Enrollment has been completed. You should restart to enable FileVault 2." -button1 "OK" -defaultButton 1
