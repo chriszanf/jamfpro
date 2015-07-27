@@ -14,7 +14,7 @@ if [ -d "/usr/sbin/cocoaDialog.app" ]; then
 	CoDi="/usr/sbin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
 else
 	echo "CocoaDialog.app not found installing" 
-	/usr/sbin/jamf policy -trigger cocoa
+	/usr/sbin/jamf policy -event cocoa
 fi
 
 #######################################################################
