@@ -4,18 +4,24 @@
 # Created By: Adam Codega, Swipely Inc.
 # 	with help from Ross Derewianko Ping Identity Corporation
 # Creation Date: June 2015 
+# Last updated: Oct 2015
 # Brief Description: Changes machine hostname based on first initial and
 # 	last name of local user. Then, ask IT tech which department to
-# 	set computer to in JSS.
+# 	set computer to in JSS. Follows up with installing updates
+#   running a recon, and telling tech it's ready to restart.
 ########################################################################
 
-#check for CocoaDialog & if not install it
-if [ -d "/usr/sbin/cocoaDialog.app" ]; then
-	CoDi="/usr/sbin/cocoaDialog.app/Contents/MacOS/cocoaDialog"
+#Find out where JAMF is because of the JSS 9.8 binary move
+jamfbinary=`/usr/bin/which jamf`
+
+#check for cocoaDialog and if not install it
+if [ -d "/Applications/Utilities/cocoaDialog.app" ]; then
+echo "CocoaDialog.app installed, continuing on"
 else
-	echo "CocoaDialog.app not found installing" 
-	/usr/sbin/jamf policy -event cocoa
+ $jamf_binary policy -trigger cocoa
+echo "CocoaDialog.app not found, pausing to install"
 fi
+coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 
 #######################################################################
 # Figure out the hostname
@@ -46,11 +52,11 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 #######################################################################
 
 function sethostname() {
-	jamf setComputerName -name $hostname
+	$jamf_binary setComputerName -name $hostname
 }
 
 function cdprompt() {
-	jssdept=`"$CoDi" standard-dropdown --title "Choose a Department"  --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
+	jssdept=`"$coDi" standard-dropdown --title "Choose a Department"  --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
 
 	if [ "$jssdept" == "2" ]; then
 		echo "user cancelled"
@@ -66,7 +72,7 @@ function cleanjssdept() {
 
 #sets department using JAMF Framework Recon command
 function setdepartment() {
-	jamf recon -department $dept
+	$jamf_binary recon -department $dept
 }
 
 
@@ -79,16 +85,15 @@ cdprompt
 setdepartment
 
 # now that the dept is set let's apply profiles and policies
-jamf manage
-jamf policy
+$jamf_binary manage
+$jamf_binary policy
 
 # manage and policy probably changed stuff, so let's submit an updated inventory
-jamf recon
+$jamf_binary recon
 
 # install all updates and turn schedule On
 softwareupdate --schedule on
 softwareupdate -ia
 
 #notify the tech that computer is ready for restart
-/Library/Application\ Support/JAMF/bin/jamfHelper.app/Contents/MacOS/jamfHelper -startlaunchd -windowType hud -title "JAMF Software" -heading "Enrollment Complete" -description "Enrollment has been completed. You should restart to enable FileVault 2." -button1 "OK" -defaultButton 1
-
+$coDi bubble --no-timeout --title "Swipely Enrollment Complete" --text "Restart this computer to enable FileVault 2 Encryption" --icon "computer"
