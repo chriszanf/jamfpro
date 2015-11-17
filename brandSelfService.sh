@@ -11,9 +11,11 @@
 # 
 # Files needed:
 # Your replacement icon for the app, 256x256: /icons/appicon.icns
-# Your high res replacement icon for the app, 512x512: /icons/appicon@2x.icns
+# Your Retina replacement icon for the app, 512x512: /icons/appicon@2x.icns
 # Your replacement for the status area of SS, 84x84: /icons/logo-SelfService.tiff
 # 
+# YOU MUST RUN THIS COMMAND WITH ELEVATED PRIVILEGES (sudo)
+#
 # For use with the JAMF Casper Suite
 #
 # Adam Codega, Swipely
@@ -34,8 +36,8 @@ cp /icons/logo-SelfService.tiff Self\ Service.app/Contents/Resources/jsLogo-Self
 # Rename Self Service in it's plist
 echo "Renaming Self Service in info.plist and chmoding it.."
 # Put your preferred app name at the end of this line in double quotes
-sudo defaults write Self\ Service.app/Contents/Info CFBundleName "Swipely Service"
-sudo chmod 744 Self\ Service.app/Contents/Info.plist
+defaults write Self\ Service.app/Contents/Info CFBundleName "Swipely Service"
+chmod 744 Self\ Service.app/Contents/Info.plist
 
 echo
 echo "Done. You've been branded."
