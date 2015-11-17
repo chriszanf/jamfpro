@@ -23,21 +23,29 @@
 
 # Copy the icon into place
 echo "Copying the icon file into place.."
-cp /icons/appicon.icns Self\ Service.app/Contents/Resources/Self\ Service.icns
+cp icons/appicon.icns Self\ Service.app/Contents/Resources/Self\ Service.icns
+chmod 744 Self\ Service.app/Contents/Resources/Self\ Service.icns
 
 # Copy the Retina icon into place
 echo "Copying the Retina icon into place.."
-cp /icons/appicon@2x.icns Self\ Service.app/Contents/Resources/Self\ Service@2x.icns
+cp icons/appicon@2x.icns Self\ Service.app/Contents/Resources/Self\ Service@2x.icns
+chmod 744 Self\ Service.app/Contents/Resources/Self\ Service.icns
 
 # Copy the status area icon into place
 echo "Copying the status area icon into place.."
-cp /icons/logo-SelfService.tiff Self\ Service.app/Contents/Resources/jsLogo-SelfService.tiff
+cp icons/logo-SelfService.tiff Self\ Service.app/Contents/Resources/jsLogo-SelfService.tiff
+chmod 744 Self\ Service.app/Contents/Resources/Self\ Service.icns
 
 # Rename Self Service in it's plist
 echo "Renaming Self Service in info.plist and chmoding it.."
 # Put your preferred app name at the end of this line in double quotes
 defaults write Self\ Service.app/Contents/Info CFBundleName "Swipely Service"
 chmod 744 Self\ Service.app/Contents/Info.plist
+
+# Rename the app itself
+echo "Renaming Self Service the app itself.."
+# Put your preferred app name at the end of this line in double quotes
+mv Self\ Service.app "Swipely Service.app"
 
 echo
 echo "Done. You've been branded."
