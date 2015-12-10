@@ -16,10 +16,10 @@ jamfbinary=`/usr/bin/which jamf`
 
 #check for cocoaDialog and if not install it
 if [ -d "/Applications/Utilities/cocoaDialog.app" ]; then
-echo "CocoaDialog.app installed, continuing on"
+	echo "CocoaDialog.app installed, continuing on"
 else
- $jamf_binary policy -trigger cocoa
-echo "CocoaDialog.app not found, pausing to install"
+	echo "CocoaDialog.app not found, pausing to install"
+	$jamf_binary policy -trigger cocoa
 fi
 coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 
