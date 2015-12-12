@@ -3,8 +3,8 @@
 ########################################################################
 # Created By: Adam Codega, Swipely Inc.
 # 	with help from Ross Derewianko Ping Identity Corporation
-# Creation Date: June 2015 
-# Last updated: Oct 2015
+# Creation Date: June 2015
+# Last updated: Dec 2015
 # Brief Description: Changes machine hostname based on first initial and
 # 	last name of local user. Then, ask IT tech which department to
 # 	set computer to in JSS. Follows up with installing updates
@@ -12,14 +12,14 @@
 ########################################################################
 
 #Find out where JAMF is because of the JSS 9.8 binary move
-jamfbinary=`/usr/bin/which jamf`
+jamfbinary='/usr/bin/which jamf'
 
 #check for cocoaDialog and if not install it
 if [ -d "/Applications/Utilities/cocoaDialog.app" ]; then
 	echo "CocoaDialog.app installed, continuing on"
 else
 	echo "CocoaDialog.app not found, pausing to install"
-	$jamf_binary policy -trigger cocoa
+	$jamfbinary policy -trigger cocoa
 fi
 coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 
@@ -52,7 +52,7 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 #######################################################################
 
 function sethostname() {
-	$jamf_binary setComputerName -name $hostname
+	$jamfbinary setComputerName -name $hostname
 }
 
 function cdprompt() {
@@ -72,7 +72,7 @@ function cleanjssdept() {
 
 #sets department using JAMF Framework Recon command
 function setdepartment() {
-	$jamf_binary recon -department $dept
+	$jamfbinary recon -department $dept
 }
 
 
@@ -85,11 +85,11 @@ cdprompt
 setdepartment
 
 # now that the dept is set let's apply profiles and policies
-$jamf_binary manage
-$jamf_binary policy
+$jamfbinary manage
+$jamfbinary policy
 
 # manage and policy probably changed stuff, so let's submit an updated inventory
-$jamf_binary recon
+$jamfbinary recon
 
 # install all updates and turn schedule On
 softwareupdate --schedule on
