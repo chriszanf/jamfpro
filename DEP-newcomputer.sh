@@ -7,8 +7,12 @@
 # Last updated: Dec 2015
 # Brief Description: Changes machine hostname based on first initial and
 # 	last name of local user. Then, ask IT tech which department to
-# 	set computer to in JSS. Follows up with installing updates
+# 	set computer to in JSS. Follows up with installing updates,
 #   running a recon, and telling tech it's ready to restart.
+########################################################################
+
+########################################################################
+# Lets locate some Applications
 ########################################################################
 
 #Find out where JAMF is because of the JSS 9.8 binary move
@@ -22,6 +26,15 @@ else
 	$jamfbinary policy -trigger cocoa
 fi
 coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
+
+#check for Dockutil and if not install it
+if [ -d "/usr/local/bin/dockutil" ]; then
+	echo "Dockutil.app installed, continuing on"
+else
+	echo "Dockutil not found, pausing to install"
+	$jamfbinary policy -trigger dockutil
+fi
+dockutil="/usr/local/bin/dockutil"
 
 #######################################################################
 # Figure out the hostname
@@ -48,14 +61,23 @@ un=($finitial$ln)
 hostname=$(echo $un | awk '{print tolower($0)}')
 
 #######################################################################
+# Clean up the dock
+#######################################################################
+
+$dockutil --remove all
+$dockutil --add '/Applications/Launchpad.app' --no-restart
+$dockutil --add 'System Preferences' --no-restart
+$dockutil --add '~/Downloads'
+
+#######################################################################
 # Functions
 #######################################################################
 
-function sethostname() {
+sethostname() {
 	$jamfbinary setComputerName -name $hostname
 }
 
-function cdprompt() {
+cdprompt() {
 	jssdept=`"$coDi" standard-dropdown --title "Choose a Department"  --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
 
 	if [ "$jssdept" == "2" ]; then
@@ -66,12 +88,12 @@ function cdprompt() {
 }
 
 #cleans the first two characters out (cocoaDialog adds a 1 \n to the string value which we don't need.)
-function cleanjssdept() {
+cleanjssdept() {
 	dept=${jssdept:2}
 }
 
 #sets department using JAMF Framework Recon command
-function setdepartment() {
+setdepartment() {
 	$jamfbinary recon -department $dept
 }
 
@@ -91,9 +113,14 @@ $jamfbinary policy
 # manage and policy probably changed stuff, so let's submit an updated inventory
 $jamfbinary recon
 
-# install all updates and turn schedule On
+# set softwareupdate schedule On
 softwareupdate --schedule on
-softwareupdate -ia
+
+# install all updates with verbose output
+softwareupdate -via
+
+# recon again
+$jamfbinary recon
 
 #notify the tech that computer is ready for restart
-$coDi bubble --no-timeout --title "Swipely Enrollment Complete" --text "Restart this computer to enable FileVault 2 Encryption" --icon "computer"
+$coDi bubble --no-timeout --title "Swipely Enrollment Complete" --text "Restart to enable FileVault 2 Encryption" --icon "computer"
