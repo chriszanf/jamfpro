@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 ########################################################################
 # Created By: Adam Codega, Swipely Inc.
@@ -23,7 +23,7 @@ if [ -d "/Applications/Utilities/cocoaDialog.app" ]; then
 	echo "CocoaDialog.app installed, continuing on"
 else
 	echo "CocoaDialog.app not found, pausing to install"
-	$jamfbinary policy -trigger cocoa
+	$jamfbinary policy -event cocoa
 fi
 coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 
@@ -32,7 +32,7 @@ if [ -d "/usr/local/bin/dockutil" ]; then
 	echo "Dockutil.app installed, continuing on"
 else
 	echo "Dockutil not found, pausing to install"
-	$jamfbinary policy -trigger dockutil
+	$jamfbinary policy -event dockutil
 fi
 dockutil="/usr/local/bin/dockutil"
 
@@ -67,7 +67,7 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 $dockutil --remove all
 $dockutil --add '/Applications/Launchpad.app' --no-restart
 $dockutil --add 'System Preferences' --no-restart
-$dockutil --add '~/Downloads'
+$dockutil --add '/$HOME/Downloads'
 
 #######################################################################
 # Functions
