@@ -67,7 +67,7 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 $dockutil --remove all
 $dockutil --add '/Applications/Launchpad.app' --no-restart
 $dockutil --add 'System Preferences' --no-restart
-$dockutil --add '/$HOME/Downloads'
+$dockutil --add '~/Downloads'
 
 #######################################################################
 # Functions
