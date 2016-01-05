@@ -28,7 +28,7 @@ fi
 coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 
 #check for Dockutil and if not install it
-if [ -d "/usr/local/bin/dockutil" ]; then
+if [ -f "/usr/local/bin/dockutil" ]; then
 	echo "Dockutil.app installed, continuing on"
 else
 	echo "Dockutil not found, pausing to install"
@@ -66,7 +66,7 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 
 $dockutil --remove all
 $dockutil --add '/Applications/Launchpad.app' --no-restart
-$dockutil --add 'System Preferences' --no-restart
+$dockutil --add '/Applications/System Preferences.app' --no-restart
 $dockutil --add '~/Downloads'
 
 #######################################################################
