@@ -1,7 +1,7 @@
-#/bin/bash
+#!/bin/bash
 #
 # Set the screen saver time, password delay, and ask for
-# password preference for the logged in user. 
+# password preference for the logged in user.
 #
 # Adam Codega, Swipely
 #
