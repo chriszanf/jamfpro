@@ -78,7 +78,7 @@ sethostname() {
 }
 
 cdprompt() {
-	jssdept=`"$coDi" standard-dropdown --title "Choose a Department"  --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
+	jssdept=`"$coDi" standard-dropdown --string-output --title "Choose a Department" --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
 
 	if [ "$jssdept" == "2" ]; then
 		echo "user cancelled"
@@ -89,7 +89,7 @@ cdprompt() {
 
 #cleans the first two characters out (cocoaDialog adds a 1 \n to the string value which we don't need.)
 cleanjssdept() {
-	dept=${jssdept:2}
+	dept=$(echo "$jssdept" | sed -n 2p)
 }
 
 #sets department using JAMF Framework Recon command
