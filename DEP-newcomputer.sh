@@ -106,6 +106,11 @@ sethostname
 cdprompt
 setdepartment
 
+# sometimes we image (don't tell anyone) so we need to makes sure device is in live building and dept none
+
+$jamfbinary recon -building "10 Dorrance St"
+$jamfbinary recon -department "None"
+
 # now that the dept is set let's apply profiles and policies
 $jamfbinary manage
 $jamfbinary policy
