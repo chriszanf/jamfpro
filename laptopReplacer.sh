@@ -16,4 +16,4 @@ coDi="/Applications/Utilities/cocoaDialog.app/Contents/MacOS/CocoaDialog"
 borndate=`/Library/Application\ Support/Upserve/warranty-check/warranty | awk '/Manufactured/ {print $3}'`
 deathdate=`date -j -f %Y-%m-%d -v+2y $borndate +"%b %d, %Y"`
 
-$coDi ok-msgbox --no-cancel --title "Laptop Replacement Check" --text "Your laptop warranty expires on or around $deathdate" --informative-text "Your laptop replacement will be scheduled near that date" --icon computer >> /dev/null
+$coDi ok-msgbox --no-cancel --title "Laptop Replacement Check" --text "Your laptop warranty expires on or around $deathdate" --informative-text "Your laptop replacement will be scheduled near that date" --icon computer &> /dev/null
