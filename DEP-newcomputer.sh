@@ -43,22 +43,22 @@ dockutil="/usr/local/bin/dockutil"
 #Set the hostname
 
 # figure out the user
-user=`python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");'`
+user=$(python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
 
 #figure out the user's full name
-name=$(finger $user | awk -F: '{ print $3 }' | head -n1 | sed 's/^ //' )
+name=$(finger "$user" | awk -F: '{ print $3 }' | head -n1 | sed 's/^ //' )
 
 # get first initial
-finitial="$(echo $name | head -c 1)"
+finitial="$(echo "$name" | head -c 1)"
 
 # get last name
-ln="$(echo $name | cut -d \  -f 2)"
+ln="$(echo "$name" | cut -d \  -f 2)"
 
 # add first and last together
 un=($finitial$ln)
 
 # clean up un to have all lower case
-hostname=$(echo $un | awk '{print tolower($0)}')
+hostname=$(echo "$un" | awk '{print tolower($0)}')
 
 #######################################################################
 # Clean up the dock
@@ -67,18 +67,18 @@ hostname=$(echo $un | awk '{print tolower($0)}')
 $dockutil --remove all
 $dockutil --add '/Applications/Launchpad.app' --no-restart
 $dockutil --add '/Applications/System Preferences.app' --no-restart
-$dockutil --add '~/Downloads'
+$dockutil --add "/$HOME/Downloads"
 
 #######################################################################
 # Functions
 #######################################################################
 
 sethostname() {
-	$jamfbinary setComputerName -name $hostname
+	$jamfbinary setComputerName -name "$hostname"
 }
 
 cdprompt() {
-	jssdept=`"$coDi" standard-dropdown --string-output --title "Choose a Department" --height 150 --text "Department" --items "Business Administration" Engineering Finance Marketing Product Sales Success "Talent + Office Ops"`
+	jssdept=$("$coDi" standard-dropdown --string-output --title "Choose a Department" --height 150 --text "Department" --items "Business Administration" Technology Finance Marketing Product Sales Success Talent)
 
 	if [ "$jssdept" == "2" ]; then
 		echo "user cancelled"
@@ -94,7 +94,7 @@ cleanjssdept() {
 
 #sets department using JAMF Framework Recon command
 setdepartment() {
-	$jamfbinary recon -department $dept
+	$jamfbinary recon -department "$dept"
 }
 
 
@@ -102,14 +102,13 @@ setdepartment() {
 # Script
 ########################################################################
 
+# sometimes we image (don't tell anyone) so we need to makes sure Site is Upserve and Department is None
+$jamfbinary recon -building "Upserve"
+$jamfbinary recon -department "None"
+
 sethostname
 cdprompt
 setdepartment
-
-# sometimes we image (don't tell anyone) so we need to makes sure device is in live building and dept none
-
-$jamfbinary recon -building "10 Dorrance St"
-$jamfbinary recon -department "None"
 
 # now that the dept is set let's apply profiles and policies
 $jamfbinary manage
@@ -128,4 +127,4 @@ softwareupdate -via
 $jamfbinary recon
 
 #notify the tech that computer is ready for restart
-$coDi bubble --no-timeout --title "Swipely Enrollment Complete" --text "Restart to enable FileVault 2 Encryption" --icon "computer"
+$coDi bubble --no-timeout --title "Upserve Enrollment Complete" --text "Restart to enable FileVault 2 Encryption" --icon "computer"
