@@ -10,7 +10,7 @@
 #
 
 # find the JAMF binary location
-jamfbinary=`/usr/bin/which jamf`
+jamfbinary=$(/usr/bin/which jamf)
 
 # find the user who's logged in
 user=$(python -c 'from SystemConfiguration import SCDynamicStoreCopyConsoleUser; import sys; username = (SCDynamicStoreCopyConsoleUser(None, None, None) or [None])[0]; username = [username,""][username in [u"loginwindow", None, u""]]; sys.stdout.write(username + "\n");')
